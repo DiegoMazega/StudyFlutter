@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
 class Home extends StatefulWidget {
   Home({Key key}) : super(key: key);
@@ -9,10 +13,18 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
-List _list = ["fazer algo1", "fazer algo 2"];
+List _list = [];
+
+_salvar()async{
+  final directory = await getApplicationDocumentsDirectory();
+  File file =  File("${directory.path}/data.json");
+  String data = json.encode(_list);
+  file.writeAsString(data);
+}
 
   @override
   Widget build(BuildContext context) {
+    _salvar();
     return Scaffold(
       appBar: AppBar(
         title: Text("Lista de Tarefas"), centerTitle: true,
@@ -40,7 +52,6 @@ List _list = ["fazer algo1", "fazer algo 2"];
                     ),
                     FlatButton(
                     onPressed: (){
-
                       Navigator.of(context).pop();
                     }, 
                     child: Text("Salvar")
