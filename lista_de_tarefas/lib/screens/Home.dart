@@ -15,16 +15,47 @@ class _HomeState extends State<Home> {
 
 List _list = [];
 
+ Future<File> _getFile()async{
+    final directory = await getApplicationDocumentsDirectory();
+    return File("${directory.path}/data.json");
+
+  }
+
+_lerArquivo()async{
+  try{
+    final file = await _getFile();
+    return file.readAsString();
+  }catch(event){
+    return null;
+  }
+}
+
 _salvar()async{
-  final directory = await getApplicationDocumentsDirectory();
-  File file =  File("${directory.path}/data.json");
+  final file = await _getFile();
+
+  Map<String, dynamic> jobs = Map();
+  jobs['titulo'] = "Estudar React";
+  jobs['realizada'] = false;
+  _list.add(jobs);
+
   String data = json.encode(_list);
   file.writeAsString(data);
 }
 
+@override
+  void initState(){
+    super.initState();
+    _lerArquivo().then((data){
+      setState(() {
+        _list = json.decode(data);
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    _salvar();
+    //_salvar();
+    print("itens ->" + _list.toString());
     return Scaffold(
       appBar: AppBar(
         title: Text("Lista de Tarefas"), centerTitle: true,
@@ -72,7 +103,7 @@ _salvar()async{
               itemCount: _list.length,
               itemBuilder: (context, index){
                 return ListTile(
-                  title: Text(_list[index]),
+                  title: Text(_list[index]['titulo']),
                 );
               }
               )
